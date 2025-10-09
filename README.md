@@ -44,8 +44,8 @@
 
 1.  **Клонируйте репозиторий:**
     ```bash
-    git clone https://github.com/machka-pasla/remnawave-tg-shop
-    cd remnawave-tg-shop
+    git clone https://github.com/NexusQX/TelegramBot.git
+    cd TelegramBot
     ```
 
 2.  **Создайте и настройте файл `.env`:**
@@ -176,7 +176,3 @@
 ## 🔮 Планы на будущее
 
 -   Расширенные типы промокодов (например, скидки в процентах).
-
-## ❤️ Поддержка
-- Карты РФ и зарубежные: [Tribute](https://t.me/tribute/app?startapp=dqdg)
-- Crypto: `USDT TRC-20 TT3SqBbfU4vYm6SUwUVNZsy278m2xbM4GE`

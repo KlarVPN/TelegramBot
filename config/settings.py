@@ -6,16 +6,18 @@ from typing import Optional, List, Dict, Any
 
 class Settings(BaseSettings):
     BOT_TOKEN: str
-    ADMIN_IDS_STR: str = Field(
-        default="",
-        alias="ADMIN_IDS",
-        description="Comma-separated list of admin Telegram User IDs")
+    ADMIN_IDS: list[int] = Field(
+        default="[]",
+        description="List of admin Telegram User IDs")
 
     POSTGRES_USER: str = Field(default="user")
     POSTGRES_PASSWORD: str = Field(default="password")
     POSTGRES_HOST: str = Field(default="localhost")
     POSTGRES_PORT: int = Field(default=5432)
-    POSTGRES_DB: str = Field(default="vpn_shop_db")
+    POSTGRES_DB: str = Field(default="telegram-shop-database")
+    
+    REDIS_HOST: str = Field(default="telegram-shop-redis")
+    REDIS_PORT: int = Field(default=6379)
 
     DEFAULT_LANGUAGE: str = Field(default="ru")
     DEFAULT_CURRENCY_SYMBOL: str = Field(default="RUB")
@@ -134,24 +136,7 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-
-    @computed_field
-    @property
-    def ADMIN_IDS(self) -> List[int]:
-        if self.ADMIN_IDS_STR:
-            try:
-                return [
-                    int(admin_id.strip())
-                    for admin_id in self.ADMIN_IDS_STR.split(',')
-                    if admin_id.strip().isdigit()
-                ]
-            except ValueError:
-                logging.error(
-                    f"Invalid ADMIN_IDS_STR format: '{self.ADMIN_IDS_STR}'. Expected comma-separated integers."
-                )
-                return []
-        return []
-
+    
     @computed_field
     @property
     def PRIMARY_ADMIN_ID(self) -> Optional[int]:

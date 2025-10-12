@@ -1,9 +1,9 @@
 services:
-  remnawave-tg-shop:
+  telegram-shop:
     image: ghcr.io/machka-pasla/remnawave-tg-shop:latest
 #    build: .
-    container_name: remnawave-tg-shop
-    hostname: remnawave-tg-shop
+    container_name: telegram-shop
+    hostname: telegram-shop
     env_file:
       - .env
     networks:
@@ -15,27 +15,49 @@ services:
       remnawave-tg-shop-db:
         condition: service_healthy
 
-  remnawave-tg-shop-db:
-    image: postgres:17
-    container_name: remnawave-tg-shop-db
-    hostname: remnawave-tg-shop-db
+  telegram-shop-database:
+    image: postgres:17.6
+    container_name: 'telegram-shop-database'
+    hostname: telegram-shop-database
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=UTC
     env_file:
       - .env
     volumes:
-      - remnawave-tg-shop-db-data:/var/lib/postgresql/data
+      - telegram-shop-database-data:/var/lib/postgresql/data
     networks:
       - remnawave-network
-    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 3s
+      timeout: 10s
+      retries: 3
+
+  telegram-shop-redis:
+    image: valkey/valkey:8.1-alpine
+    container_name: telegram-shop-redis
+    hostname: telegram-shop-redis
+    restart: always
+    networks:
+      - remnawave-network
+    volumes:
+      - telegram-shop-redis-data:/data
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 3s
+      timeout: 10s
+      retries: 3
 
 networks:
   remnawave-network:
     external: true
 
 volumes:
-  remnawave-tg-shop-db-data:
-    name: remnawave-tg-shop-db-data
+  telegram-shop-database-data:
+    name: telegram-shop-database-data
+  telegram-shop-redis-data:
+    name: telegram-shop-redis-data

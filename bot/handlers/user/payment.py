@@ -170,6 +170,18 @@ async def process_successful_payment(session: AsyncSession, bot: Bot,
                     card_last4=display_last4,
                     card_network=display_network,
                 )
+                try:
+                    await user_billing_dal.upsert_user_payment_method(
+                        session,
+                        user_id=user_id,
+                        provider_payment_method_id=pm_id,
+                        provider="yookassa",
+                        card_last4=display_last4,
+                        card_network=display_network,
+                        set_default=True,
+                    )
+                except Exception:
+                    logging.exception("Failed to persist multi-card YooKassa method from webhook")
         except Exception:
             logging.exception("Failed to persist YooKassa payment method from webhook")
         updated_payment_record = await payment_dal.update_payment_status_by_db_id(
@@ -280,7 +292,7 @@ async def process_successful_payment(session: AsyncSession, bot: Bot,
                 details_message = _("payment_successful_error_details")
 
             details_markup = get_connect_and_main_keyboard(
-                user_lang, i18n, settings, config_link
+                user_lang, i18n, settings, config_link, preserve_message=True
             )
         try:
             await bot.send_message(

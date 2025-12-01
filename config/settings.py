@@ -514,3 +514,5 @@ def get_settings() -> Settings:
                 f"CRITICAL SETTINGS ERROR: {e}. Please check your .env file and Settings model."
             )
     return _settings_instance
+
+settings = get_settings()

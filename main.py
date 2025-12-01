@@ -2,17 +2,12 @@ import asyncio
 import logging
 import sys
 
-from dotenv import load_dotenv
-
 from bot.main_bot import run_bot
-from config.settings import get_settings, Settings
+from config.settings import settings
 from db.database_setup import init_db, init_db_connection
 
 
 async def main():
-    load_dotenv()
-    settings = get_settings()
-
     session_factory = init_db_connection(settings)
     if not session_factory:
         logging.critical(

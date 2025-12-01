@@ -79,7 +79,8 @@ services:
       retries: 3
 
 networks:
-  remnawave-network: null
+  remnawave-network:
+    external: true
 
 volumes:
   klarvpn-shop-db-data:

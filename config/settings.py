@@ -1,23 +1,25 @@
 import logging
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Any, Dict, List, Optional
+
 from pydantic import Field, ValidationError, computed_field, field_validator
-from typing import Optional, List, Dict, Any
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     BOT_TOKEN: str
     ADMIN_IDS: list[int] = Field(
-        default="[]",
-        description="List of admin Telegram User IDs")
+        default="[]", description="List of admin Telegram User IDs"
+    )
 
-    POSTGRES_USER: str = Field(default="user")
-    POSTGRES_PASSWORD: str = Field(default="password")
-    POSTGRES_HOST: str = Field(default="localhost")
-    POSTGRES_PORT: int = Field(default=5432)
-    POSTGRES_DB: str = Field(default="telegram-shop-database")
-    
+    DATABASE_USER: str = Field(default="user")
+    DATABASE_PASSWORD: str = Field(default="password")
+    DATABASE_HOST: str = Field(default="localhost")
+    DATABASE_PORT: int = Field(default=5432)
+    DATABASE_NAME: str = Field(default="telegram-shop-database")
+
     REDIS_HOST: str = Field(default="telegram-shop-redis")
     REDIS_PORT: int = Field(default=6379)
+    REDIS_PASSWORD: str = Field(default="")
 
     DEFAULT_LANGUAGE: str = Field(default="ru")
     DEFAULT_CURRENCY_SYMBOL: str = Field(default="RUB")
@@ -25,12 +27,14 @@ class Settings(BaseSettings):
     SUPPORT_LINK: Optional[str] = Field(default=None)
     SERVER_STATUS_URL: Optional[str] = Field(default=None)
     TERMS_OF_SERVICE_URL: Optional[str] = Field(default=None)
-    REQUIRED_CHANNEL_ID: Optional[int] = Field(
+    REQUIRED_CHANNEL_ID: Optional[int | None] = Field(
         default=None,
-        description="Telegram channel ID the user must join to access the bot")
+        description="Telegram channel ID the user must join to access the bot",
+    )
     REQUIRED_CHANNEL_LINK: Optional[str] = Field(
         default=None,
-        description="Public username or invite link to the required channel for join button")
+        description="Public username or invite link to the required channel for join button",
+    )
 
     YOOKASSA_SHOP_ID: Optional[str] = None
     YOOKASSA_SECRET_KEY: Optional[str] = None
@@ -45,7 +49,7 @@ class Settings(BaseSettings):
     YOOKASSA_AUTOPAYMENTS_ENABLED: bool = Field(default=False)
     YOOKASSA_AUTOPAYMENTS_REQUIRE_CARD_BINDING: bool = Field(
         default=True,
-        description="When true, new YooKassa payments in autopay mode force card binding without a user checkbox."
+        description="When true, new YooKassa payments in autopay mode force card binding without a user checkbox.",
     )
 
     WEBHOOK_BASE_URL: Optional[str] = None
@@ -84,14 +88,18 @@ class Settings(BaseSettings):
     STARS_PRICE_6_MONTHS: Optional[int] = Field(default=None)
     STARS_PRICE_12_MONTHS: Optional[int] = Field(default=None)
 
-
     TRIBUTE_LINK_1_MONTH: Optional[str] = Field(default=None)
     TRIBUTE_LINK_3_MONTHS: Optional[str] = Field(default=None)
     TRIBUTE_LINK_6_MONTHS: Optional[str] = Field(default=None)
     TRIBUTE_LINK_12_MONTHS: Optional[str] = Field(default=None)
     TRIBUTE_API_KEY: Optional[str] = Field(default=None)
-    TRIBUTE_SKIP_NOTIFICATIONS: bool = Field(default=True, description="Skip renewal notifications for Tribute payments")
-    TRIBUTE_SKIP_CANCELLATION_NOTIFICATIONS: bool = Field(default=False, description="Skip cancellation notifications for Tribute payments")
+    TRIBUTE_SKIP_NOTIFICATIONS: bool = Field(
+        default=True, description="Skip renewal notifications for Tribute payments"
+    )
+    TRIBUTE_SKIP_CANCELLATION_NOTIFICATIONS: bool = Field(
+        default=False,
+        description="Skip cancellation notifications for Tribute payments",
+    )
     PANEL_WEBHOOK_SECRET: Optional[str] = Field(default=None)
 
     SUBSCRIPTION_NOTIFICATIONS_ENABLED: bool = Field(default=True)
@@ -100,31 +108,39 @@ class Settings(BaseSettings):
     SUBSCRIPTION_NOTIFY_DAYS_BEFORE: int = Field(default=3)
 
     REFERRAL_BONUS_DAYS_INVITER_1_MONTH: Optional[int] = Field(
-        default=3, alias="REFERRAL_BONUS_DAYS_1_MONTH")
+        default=3, alias="REFERRAL_BONUS_DAYS_1_MONTH"
+    )
     REFERRAL_BONUS_DAYS_INVITER_3_MONTHS: Optional[int] = Field(
-        default=7, alias="REFERRAL_BONUS_DAYS_3_MONTHS")
+        default=7, alias="REFERRAL_BONUS_DAYS_3_MONTHS"
+    )
     REFERRAL_BONUS_DAYS_INVITER_6_MONTHS: Optional[int] = Field(
-        default=15, alias="REFERRAL_BONUS_DAYS_6_MONTHS")
+        default=15, alias="REFERRAL_BONUS_DAYS_6_MONTHS"
+    )
     REFERRAL_BONUS_DAYS_INVITER_12_MONTHS: Optional[int] = Field(
-        default=30, alias="REFERRAL_BONUS_DAYS_12_MONTHS")
+        default=30, alias="REFERRAL_BONUS_DAYS_12_MONTHS"
+    )
 
     REFERRAL_BONUS_DAYS_REFEREE_1_MONTH: Optional[int] = Field(
-        default=1, alias="REFEREE_BONUS_DAYS_1_MONTH")
+        default=1, alias="REFEREE_BONUS_DAYS_1_MONTH"
+    )
     REFERRAL_BONUS_DAYS_REFEREE_3_MONTHS: Optional[int] = Field(
-        default=3, alias="REFEREE_BONUS_DAYS_3_MONTHS")
+        default=3, alias="REFEREE_BONUS_DAYS_3_MONTHS"
+    )
     REFERRAL_BONUS_DAYS_REFEREE_6_MONTHS: Optional[int] = Field(
-        default=7, alias="REFEREE_BONUS_DAYS_6_MONTHS")
+        default=7, alias="REFEREE_BONUS_DAYS_6_MONTHS"
+    )
     REFERRAL_BONUS_DAYS_REFEREE_12_MONTHS: Optional[int] = Field(
-        default=15, alias="REFEREE_BONUS_DAYS_12_MONTHS")
+        default=15, alias="REFEREE_BONUS_DAYS_12_MONTHS"
+    )
 
     # Referral program configuration
     REFERRAL_ONE_BONUS_PER_REFEREE: bool = Field(
         default=True,
-        description="When true, referral bonuses (for inviter and referee) are applied only once per invited user - on their first successful payment."
+        description="When true, referral bonuses (for inviter and referee) are applied only once per invited user - on their first successful payment.",
     )
     LEGACY_REFS: bool = Field(
         default=True,
-        description="Allow legacy referral links like ref_<telegram_id> to continue working. Defaults to True when unset."
+        description="Allow legacy referral links like ref_<telegram_id> to continue working. Defaults to True when unset.",
     )
 
     PANEL_API_URL: Optional[str] = None
@@ -133,12 +149,12 @@ class Settings(BaseSettings):
     USER_TRAFFIC_STRATEGY: str = Field(default="NO_RESET")
     USER_SQUAD_UUIDS: Optional[str] = Field(
         default=None,
-        description=
-        "Comma-separated UUIDs of internal squads to assign to new panel users")
+        description="Comma-separated UUIDs of internal squads to assign to new panel users",
+    )
     USER_EXTERNAL_SQUAD_UUID: Optional[str] = Field(
         default=None,
-        description=
-        "UUID of the external squad to assign to new panel users (optional)")
+        description="UUID of the external squad to assign to new panel users (optional)",
+    )
 
     TRIAL_ENABLED: bool = Field(default=True)
     TRIAL_DURATION_DAYS: int = Field(default=3)
@@ -151,28 +167,38 @@ class Settings(BaseSettings):
     SUBSCRIPTION_MINI_APP_URL: Optional[str] = Field(default=None)
 
     START_COMMAND_DESCRIPTION: Optional[str] = Field(default=None)
-    DISABLE_WELCOME_MESSAGE: bool = Field(default=False, description="Disable welcome message on /start command")
+    DISABLE_WELCOME_MESSAGE: bool = Field(
+        default=False, description="Disable welcome message on /start command"
+    )
 
     MY_DEVICES_SECTION_ENABLED: bool = Field(
         default=False,
-        description="Enable the My Devices section in the subscription menu"
+        description="Enable the My Devices section in the subscription menu",
     )
     USER_HWID_DEVICE_LIMIT: Optional[int] = Field(
         default=None,
-        description="Default hardware device limit for panel users (0 = unlimited)"
+        description="Default hardware device limit for panel users (0 = unlimited)",
     )
-    
+
     # Inline mode thumbnail URLs
-    INLINE_REFERRAL_THUMBNAIL_URL: str = Field(default="https://cdn-icons-png.flaticon.com/512/1077/1077114.png")
-    INLINE_USER_STATS_THUMBNAIL_URL: str = Field(default="https://cdn-icons-png.flaticon.com/512/681/681494.png")
-    INLINE_FINANCIAL_STATS_THUMBNAIL_URL: str = Field(default="https://cdn-icons-png.flaticon.com/512/2769/2769339.png")
-    INLINE_SYSTEM_STATS_THUMBNAIL_URL: str = Field(default="https://cdn-icons-png.flaticon.com/512/2920/2920277.png")
+    INLINE_REFERRAL_THUMBNAIL_URL: str = Field(
+        default="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
+    )
+    INLINE_USER_STATS_THUMBNAIL_URL: str = Field(
+        default="https://cdn-icons-png.flaticon.com/512/681/681494.png"
+    )
+    INLINE_FINANCIAL_STATS_THUMBNAIL_URL: str = Field(
+        default="https://cdn-icons-png.flaticon.com/512/2769/2769339.png"
+    )
+    INLINE_SYSTEM_STATS_THUMBNAIL_URL: str = Field(
+        default="https://cdn-icons-png.flaticon.com/512/2920/2920277.png"
+    )
 
     @computed_field
     @property
     def DATABASE_URL(self) -> str:
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-    
+        return f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+
     @computed_field
     @property
     def PRIMARY_ADMIN_ID(self) -> Optional[int]:
@@ -199,7 +225,7 @@ class Settings(BaseSettings):
         if self.USER_SQUAD_UUIDS:
             return [
                 uuid.strip()
-                for uuid in self.USER_SQUAD_UUIDS.split(',')
+                for uuid in self.USER_SQUAD_UUIDS.split(",")
                 if uuid.strip()
             ]
         return None
@@ -216,7 +242,6 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def yookassa_webhook_path(self) -> str:
-
         return "/webhook/yookassa"
 
     @computed_field
@@ -311,13 +336,29 @@ class Settings(BaseSettings):
     @property
     def stars_subscription_options(self) -> Dict[int, int]:
         options: Dict[int, int] = {}
-        if self.STARS_ENABLED and self.MONTH_1_ENABLED and self.STARS_PRICE_1_MONTH is not None:
+        if (
+            self.STARS_ENABLED
+            and self.MONTH_1_ENABLED
+            and self.STARS_PRICE_1_MONTH is not None
+        ):
             options[1] = self.STARS_PRICE_1_MONTH
-        if self.STARS_ENABLED and self.MONTH_3_ENABLED and self.STARS_PRICE_3_MONTHS is not None:
+        if (
+            self.STARS_ENABLED
+            and self.MONTH_3_ENABLED
+            and self.STARS_PRICE_3_MONTHS is not None
+        ):
             options[3] = self.STARS_PRICE_3_MONTHS
-        if self.STARS_ENABLED and self.MONTH_6_ENABLED and self.STARS_PRICE_6_MONTHS is not None:
+        if (
+            self.STARS_ENABLED
+            and self.MONTH_6_ENABLED
+            and self.STARS_PRICE_6_MONTHS is not None
+        ):
             options[6] = self.STARS_PRICE_6_MONTHS
-        if self.STARS_ENABLED and self.MONTH_12_ENABLED and self.STARS_PRICE_12_MONTHS is not None:
+        if (
+            self.STARS_ENABLED
+            and self.MONTH_12_ENABLED
+            and self.STARS_PRICE_12_MONTHS is not None
+        ):
             options[12] = self.STARS_PRICE_12_MONTHS
         return options
 
@@ -331,7 +372,11 @@ class Settings(BaseSettings):
             links[3] = self.TRIBUTE_LINK_3_MONTHS
         if self.TRIBUTE_ENABLED and self.MONTH_6_ENABLED and self.TRIBUTE_LINK_6_MONTHS:
             links[6] = self.TRIBUTE_LINK_6_MONTHS
-        if self.TRIBUTE_ENABLED and self.MONTH_12_ENABLED and self.TRIBUTE_LINK_12_MONTHS:
+        if (
+            self.TRIBUTE_ENABLED
+            and self.MONTH_12_ENABLED
+            and self.TRIBUTE_LINK_12_MONTHS
+        ):
             links[12] = self.TRIBUTE_LINK_12_MONTHS
         return links
 
@@ -362,27 +407,31 @@ class Settings(BaseSettings):
         if self.REFERRAL_BONUS_DAYS_REFEREE_12_MONTHS is not None:
             bonuses[12] = self.REFERRAL_BONUS_DAYS_REFEREE_12_MONTHS
         return bonuses
-    
+
     # Logging Configuration
-    LOG_CHAT_ID: Optional[int] = Field(default=None, description="Telegram chat/group ID for sending notifications")
-    LOG_THREAD_ID: Optional[int] = Field(default=None, description="Thread ID for supergroup messages (optional)")
-    
-    @field_validator('LOG_CHAT_ID', 'LOG_THREAD_ID', mode='before')
+    LOG_CHAT_ID: Optional[int] = Field(
+        default=None, description="Telegram chat/group ID for sending notifications"
+    )
+    LOG_THREAD_ID: Optional[int] = Field(
+        default=None, description="Thread ID for supergroup messages (optional)"
+    )
+
+    @field_validator("LOG_CHAT_ID", "LOG_THREAD_ID", mode="before")
     @classmethod
     def validate_optional_int_fields(cls, v):
         """Convert empty strings to None for optional integer fields"""
-        if isinstance(v, str) and v.strip() == '':
+        if isinstance(v, str) and v.strip() == "":
             return None
         return v
 
-    @field_validator('REQUIRED_CHANNEL_LINK', mode='before')
+    @field_validator("REQUIRED_CHANNEL_LINK", mode="before")
     @classmethod
     def sanitize_optional_link(cls, v):
         if isinstance(v, str) and not v.strip():
             return None
         return v
-    
-    @field_validator('USER_HWID_DEVICE_LIMIT', mode='before')
+
+    @field_validator("USER_HWID_DEVICE_LIMIT", mode="before")
     @classmethod
     def validate_optional_int(cls, v):
         if isinstance(v, str):
@@ -390,18 +439,30 @@ class Settings(BaseSettings):
             if not v:
                 return None
         return v
-    
-    # Notification types
-    LOG_NEW_USERS: bool = Field(default=True, description="Send notifications for new user registrations")
-    LOG_PAYMENTS: bool = Field(default=True, description="Send notifications for successful payments")
-    LOG_PROMO_ACTIVATIONS: bool = Field(default=True, description="Send notifications for promo code activations")
-    LOG_TRIAL_ACTIVATIONS: bool = Field(default=True, description="Send notifications for trial activations")
-    LOG_SUSPICIOUS_ACTIVITY: bool = Field(default=True, description="Send notifications for suspicious promo attempts")
 
-    model_config = SettingsConfigDict(env_file='.env',
-                                      env_file_encoding='utf-8',
-                                      extra='ignore',
-                                      populate_by_name=True)
+    # Notification types
+    LOG_NEW_USERS: bool = Field(
+        default=True, description="Send notifications for new user registrations"
+    )
+    LOG_PAYMENTS: bool = Field(
+        default=True, description="Send notifications for successful payments"
+    )
+    LOG_PROMO_ACTIVATIONS: bool = Field(
+        default=True, description="Send notifications for promo code activations"
+    )
+    LOG_TRIAL_ACTIVATIONS: bool = Field(
+        default=True, description="Send notifications for trial activations"
+    )
+    LOG_SUSPICIOUS_ACTIVITY: bool = Field(
+        default=True, description="Send notifications for suspicious promo attempts"
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        populate_by_name=True,
+    )
 
 
 _settings_instance: Optional[Settings] = None
@@ -415,13 +476,17 @@ def get_settings() -> Settings:
             if not _settings_instance.ADMIN_IDS:
                 logging.warning(
                     "CRITICAL: ADMIN_IDS not set or contains no valid integer IDs in .env. "
-                    "Admin functionality will be restricted.")
+                    "Admin functionality will be restricted."
+                )
 
             if not _settings_instance.PANEL_API_URL:
                 logging.warning(
                     "CRITICAL: PANEL_API_URL is not set. Panel integration will not work."
                 )
-            if not _settings_instance.YOOKASSA_SHOP_ID or not _settings_instance.YOOKASSA_SECRET_KEY:
+            if (
+                not _settings_instance.YOOKASSA_SHOP_ID
+                or not _settings_instance.YOOKASSA_SECRET_KEY
+            ):
                 logging.warning(
                     "CRITICAL: YooKassa credentials (SHOP_ID or SECRET_KEY) are not set. Payments will not work."
                 )
@@ -443,8 +508,7 @@ def get_settings() -> Settings:
                     )
 
         except ValidationError as e:
-            logging.critical(
-                f"Pydantic validation error while loading settings: {e}")
+            logging.critical(f"Pydantic validation error while loading settings: {e}")
 
             raise SystemExit(
                 f"CRITICAL SETTINGS ERROR: {e}. Please check your .env file and Settings model."

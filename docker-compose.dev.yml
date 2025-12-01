@@ -1,8 +1,6 @@
 services:
   klarvpn-shop:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/klarvpn/telegrambot:dev
     container_name: klarvpn-shop
     hostname: klarvpn-shop
     env_file:

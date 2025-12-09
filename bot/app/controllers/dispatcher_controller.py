@@ -1,4 +1,3 @@
-import logging
 from typing import Dict
 
 from aiogram import Bot, Dispatcher
@@ -9,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 from config.settings import Settings
 from bot.middlewares.db_session import DBSessionMiddleware
-from bot.middlewares.i18n import I18nMiddleware, get_i18n_instance, JsonI18n
+from bot.middlewares.i18n import I18nMiddleware, get_i18n_instance
 from bot.middlewares.ban_check_middleware import BanCheckMiddleware
 from bot.middlewares.action_logger_middleware import ActionLoggerMiddleware
 from bot.middlewares.profile_sync import ProfileSyncMiddleware

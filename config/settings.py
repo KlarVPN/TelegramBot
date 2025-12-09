@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import Field, ValidationError, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     ADMIN_IDS: list[int] = Field(
         default="[]", description="List of admin Telegram User IDs"
     )
+
+    SOCKS5_PROXY_HOST: str = Field(description="SOCKS5 proxy server hostname or IP")
+    SOCKS5_PROXY_PORT: int = Field(description="SOCKS5 proxy server port")
+    SOCKS5_PROXY_USERNAME: str = Field(description="SOCKS5 proxy username")
+    SOCKS5_PROXY_PASSWORD: str = Field(description="SOCKS5 proxy password")
 
     DATABASE_USER: str = Field(default="user")
     DATABASE_PASSWORD: str = Field(default="password")
@@ -25,6 +30,7 @@ class Settings(BaseSettings):
     DEFAULT_CURRENCY_SYMBOL: str = Field(default="RUB")
 
     SUPPORT_LINK: Optional[str] = Field(default=None)
+    TELEGRAM_CHANNEL_LINK: Optional[str] = Field(default=None)
     SERVER_STATUS_URL: Optional[str] = Field(default=None)
     TERMS_OF_SERVICE_URL: Optional[str] = Field(default=None)
     REQUIRED_CHANNEL_ID: Optional[int | None] = Field(
@@ -473,6 +479,11 @@ def get_settings() -> Settings:
     if _settings_instance is None:
         try:
             _settings_instance = Settings()
+            if not _settings_instance.SOCKS5_PROXY_PASSWORD or not _settings_instance.SOCKS5_PROXY_USERNAME or not _settings_instance.SOCKS5_PROXY_HOST or not _settings_instance.SOCKS5_PROXY_PORT:
+                logging.critical(
+                    "CRITICAL: SOCKS5 proxy settings are incomplete in .env. The bot will not be able to connect to Telegram."
+                )
+
             if not _settings_instance.ADMIN_IDS:
                 logging.warning(
                     "CRITICAL: ADMIN_IDS not set or contains no valid integer IDs in .env. "

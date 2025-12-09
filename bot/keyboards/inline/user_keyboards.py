@@ -18,15 +18,14 @@ def get_main_menu_inline_keyboard(
             InlineKeyboardButton(text=_(key="menu_activate_trial_button"),
                                  callback_data="main_action:request_trial"))
 
-    builder.row(
-        InlineKeyboardButton(text=_(key="menu_subscribe_inline"),
-                             callback_data="main_action:subscribe"))
-    builder.row(
-        InlineKeyboardButton(
+    buy_sub = InlineKeyboardButton(text=_(key="menu_subscribe_inline"),
+                             callback_data="main_action:subscribe")
+
+    my_sub = InlineKeyboardButton(
             text=_(key="menu_my_subscription_inline"),
             callback_data="main_action:my_subscription",
         )
-    )
+    builder.row(buy_sub, my_sub)
 
     referral_button = InlineKeyboardButton(
         text=_(key="menu_referral_inline"),
@@ -59,6 +58,11 @@ def get_main_menu_inline_keyboard(
         builder.row(
             InlineKeyboardButton(text=_(key="menu_terms_button"),
                                  url=settings.TERMS_OF_SERVICE_URL))
+
+    if settings.TELEGRAM_CHANNEL_LINK:
+        builder.row(
+            InlineKeyboardButton(text=_(key="menu_channel_button"),
+                                 url=settings.TELEGRAM_CHANNEL_LINK))
 
     return builder.as_markup()
 

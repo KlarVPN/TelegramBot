@@ -2,7 +2,6 @@ services:
   klarvpn-shop:
     build:
       context: .
-      dockerfile: Dockerfile
     container_name: klarvpn-shop
     hostname: klarvpn-shop
     env_file:
@@ -79,6 +78,17 @@ services:
       interval: 3s
       timeout: 10s
       retries: 3
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    networks:
+      - remnawave-network
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - klarvpn-shop
 
 networks:
   remnawave-network: null

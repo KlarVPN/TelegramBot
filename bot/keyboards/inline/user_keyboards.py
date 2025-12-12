@@ -74,8 +74,14 @@ def get_language_selection_keyboard(i18n_instance,
     builder = InlineKeyboardBuilder()
     builder.button(text=f"🇬🇧 English {'✅' if current_lang == 'en' else ''}",
                    callback_data="set_lang_en")
+    builder.button(text=f"🇮🇷 فارسی {'✅' if current_lang == 'fa' else ''}",
+                   callback_data="set_lang_fa")
+    builder.button(text=f"🇫🇷 Français {'✅' if current_lang == 'fr' else ''}",
+                   callback_data="set_lang_fr")
     builder.button(text=f"🇷🇺 Русский {'✅' if current_lang == 'ru' else ''}",
                    callback_data="set_lang_ru")
+    builder.button(text=f"🇨🇳 中文 {'✅' if current_lang == 'zh' else ''}",
+                   callback_data="set_lang_zh")
     builder.button(text=_(key="back_to_main_menu_button"),
                    callback_data="main_action:back_to_main")
     builder.adjust(1)

@@ -476,5 +476,7 @@
   "admin_ads_delete_confirm": "Вы уверены, что хотите удалить кампанию #{id}? Это действие необратимо.",
   "admin_ads_deleted_success": "Кампания удалена.",
   "admin_ads_not_found": "Кампания не найдена.",
-  "free_kassa_order_full": "Заказ №{order_id} от {date}\n\n"
+  "free_kassa_order_full": "Заказ №{order_id} от {date}\n\n",
+  "proxy_connect_button": "\uD83D\uDD17 Подключить прокси",
+  "proxy_connect_text": "<b>\uD83D\uDD10 Прокси для Telegram</b>\\n\\nНажмите кнопку для подключения \uD83D\uDC47\\n\\n<b>\uD83D\uDC8E KlarVPN</b> откроет доступ к <b>YouTube, Instagram и любым сайтам</b>"
 }

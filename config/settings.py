@@ -11,10 +11,7 @@ class Settings(BaseSettings):
         default="[]", description="List of admin Telegram User IDs"
     )
 
-    SOCKS5_PROXY_HOST: str = Field(description="SOCKS5 proxy server hostname or IP")
-    SOCKS5_PROXY_PORT: int = Field(description="SOCKS5 proxy server port")
-    SOCKS5_PROXY_USERNAME: str = Field(description="SOCKS5 proxy username")
-    SOCKS5_PROXY_PASSWORD: str = Field(description="SOCKS5 proxy password")
+    MTPROXY_LINK: str = Field(description="MTProxy link for the bot to share with users")
 
     DATABASE_USER: str = Field(default="user")
     DATABASE_PASSWORD: str = Field(default="password")
@@ -479,9 +476,12 @@ def get_settings() -> Settings:
     if _settings_instance is None:
         try:
             _settings_instance = Settings()
-            if not _settings_instance.SOCKS5_PROXY_PASSWORD or not _settings_instance.SOCKS5_PROXY_USERNAME or not _settings_instance.SOCKS5_PROXY_HOST or not _settings_instance.SOCKS5_PROXY_PORT:
+            if not _settings_instance.MTPROXY_LINK:
                 logging.critical(
-                    "CRITICAL: SOCKS5 proxy settings are incomplete in .env. The bot will not be able to connect to Telegram."
+                    "CRITICAL: MTPROXY_LINK is not set in .env. The bot cannot share proxy links with users."
+                )
+                raise SystemExit(
+                    "CRITICAL SETTINGS ERROR: MTPROXY_LINK is not set. Please check your .env file."
                 )
 
             if not _settings_instance.ADMIN_IDS:
